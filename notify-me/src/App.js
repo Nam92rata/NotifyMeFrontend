@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import LoginPage from './Login';
 import Home from './Home';
-
+import './App.css';
 
 class App extends Component {  
   constructor(props){

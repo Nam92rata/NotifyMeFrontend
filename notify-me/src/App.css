@@ -31,3 +31,19 @@
     transform: rotate(360deg);
   }
 }
+
+.LoginPage{
+  position: absolute;
+  width:380px;
+  height: 450px;
+  z-index: 15;
+  padding: auto;
+  margin: -100px 0 0 -150px;
+  overflow: auto;
+  margin: auto;
+  top:0;
+  left:0;
+  bottom: 0;
+  right: 0;
+  background-color: lightblue;
+}
