@@ -10,13 +10,19 @@ class App extends Component {
       loggedin: false
     }
   }
+  changeLogoutStateHandler=()=>{
+    this.setState({loggedin:false})
+  }
+  changeLoginStateHandler=()=>{
+    this.setState({loggedin:true})    
+  }
   render() {
     if (this.state.loggedin){
       return(
         <div className="App">        
         <div className="row"> 
             <div className="col-md-10">              
-              <Home />
+              <Home changeLogoutStateHandler={this.changeLogoutStateHandler}/>
             </div>            
         </div>
                 
@@ -29,7 +35,7 @@ class App extends Component {
         <div className="App">        
           <div className="row">
             <div className="col-md-6 col-md-offset-2">
-              <LoginPage />
+              <LoginPage changeLoginStateHandler={this.changeLoginStateHandler}/>
             </div>
           
           </div>

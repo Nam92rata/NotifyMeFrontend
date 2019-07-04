@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Switch,Link, NavLink, Redirect, Prompt} from 'react-router-dom';
-import Route from 'react-router-dom/Route';
+import { BrowserRouter as Router, Switch,Link,Route, NavLink, Redirect, Prompt} from 'react-router-dom';
+import socketIOClient from "socket.io-client";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,6 +19,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import axios from 'axios';
 const styles = theme => ({
     root: {
       width: '100%',
@@ -92,8 +93,17 @@ class Home extends Component {
     state = {
         anchorEl: null,
         mobileMoreAnchorEl: null,
+        response:''
       };
-    
+      componentDidMount() {
+        const endpoint = `http://localhost:4001/`;
+        const socket = socketIOClient(endpoint);
+        socket.on("FromAPI", data =>{
+        console.log("data", data);
+        this.setState({ response: data });
+        }
+        )
+      }
       handleProfileMenuOpen = event => {
         this.setState({ anchorEl: event.currentTarget });
       };
@@ -141,7 +151,7 @@ class Home extends Component {
           <p>Notifications</p>
         </MenuItem>
         <MenuItem onClick={this.handleProfileMenuOpen}>
-            <Button color="inherit">Logout</Button>          
+            <Button color="inherit" onClick={this.props.changeLogoutStateHandler}>Logout</Button>          
         </MenuItem>
       </Menu>
     );
@@ -150,7 +160,7 @@ class Home extends Component {
                 <div className={classes.root}>               
                 <AppBar position="static">
                     <Toolbar>
-                        <Tabs variant="contained" >
+                        <Tabs variant="standard" >
                             <Tab label="Form" component={Link} to="/form" />
                             <Tab label="Pending" component={Link} to="/pending"/>
                             <Tab label="Approved" component={Link} to="/approved" />
@@ -164,7 +174,7 @@ class Home extends Component {
                             <NotificationsIcon />
                             </Badge>
                         </IconButton>
-                        <Button color="inherit">Logout</Button>
+                        <Button color="inherit" onClick={this.props.changeLogoutStateHandler}>Logout</Button>
                         </div>
                         <div className={classes.sectionMobile}>
                         <IconButton aria-haspopup="true" onClick={this.handleMobileMenuOpen} color="inherit">
@@ -175,10 +185,14 @@ class Home extends Component {
                 </AppBar>
                 {renderMobileMenu}
                 <Switch>                    
-                    <Route path="/pending" component = {PendingPage}/>
+                    <Route path="/form" component = {FormPage}/>
+                    <Route
+                        path='/pending'
+                        render={(props) => <PendingPage {...props} data={this.state.response} />}
+                      />
                     <Route path="/approved"  component = {ApprovedPage}/>
                     <Route path="/request" component = {RequestPage}/>
-                    <Route path="/form" component = {FormPage}/>
+                    
                 </Switch>
                 </div>
             </Router>

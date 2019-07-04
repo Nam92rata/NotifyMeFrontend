@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Link, NavLink, Redirect, Prompt} from 'react-router-dom';
-import Route from 'react-router-dom/Route';
 import SignupPage from './SignupPage'
 import { Card,CardContent, Typography,Fab, FormControl, TextField, InputAdornment, IconButton, CardActions } from '@material-ui/core';
 import { Visibility, VisibilityOff,  AccountCircle } from '@material-ui/icons';
-
+import axios from 'axios';
 // var errmsg = "";
 var userActive="";
 class LoginPage extends Component {
@@ -28,23 +26,35 @@ class LoginPage extends Component {
         evt.preventDefault();
         const username= this.state.username;
         const password= this.state.password;
+        this.props.changeLoginStateHandler();
         // this.props.dispatch(authorize(username,password));
-        this.validateUser();
+        this.validateUser(username,password);
     }
 
     handleClickShowPassword = () =>{
         this.setState(state=>({showPassword : !state.showPassword}));
     }
 
-    validateUser = () => {
-        let flag = false;
-        // this.props.users.map((user) => {            
-        //     if (user.first === this.name.value){
-        //         flag = true;
-        //         userActive=user;                            
-        //     }            
-        // })
-        return flag;
+    validateUser = (username,password) => {
+        console.log(username,password)
+        const user = {
+            username: username,
+            password:password
+          };
+      
+          axios.post(`http://localhost:4000/signIn`,  user )
+            .then(res => {
+              console.log(res);
+              console.log(res.data);
+              localStorage.setItem("username",res.data.token.user);
+              localStorage.setItem("department",res.data.token.department);
+              console.log(localStorage.getItem('username'));
+            })
+            .catch(error=>{
+                console.log(error)
+            }
+                
+            )
     }
     
     handleSignup = () =>{
@@ -62,7 +72,7 @@ class LoginPage extends Component {
                     <div>
                        <Card className="LoginPage">
                            <CardContent>
-                               <Typography variant="subheading" gutterBottom component="span" align="center">
+                               <Typography gutterBottom component="span" align="center">
                                    Notify Me
                                </Typography>
                                
@@ -81,7 +91,7 @@ class LoginPage extends Component {
                                                 onChange={e=>{this.onChange(e)}}
                                                 InputProps={{
                                                     endAdornment:(
-                                                        <InputAdornment variant="filled" position="start">
+                                                        <InputAdornment  position="start">
                                                             <AccountCircle/>
                                                         </InputAdornment>
                                                     )
@@ -101,7 +111,7 @@ class LoginPage extends Component {
                                                 onChange={e=>{this.onChange(e)}}
                                                 InputProps={{
                                                     endAdornment:(
-                                                        <InputAdornment variant="filled" position="end">
+                                                        <InputAdornment  position="end">
                                                             <IconButton
                                                                 aria-label="Toggle password visibility"
                                                                 onClick={this.handleClickShowPassword}
@@ -122,6 +132,7 @@ class LoginPage extends Component {
                                         color="primary"                                        
                                         type="submit"
                                         style={{margin:20}}
+                                        
                                         onClick={this.handleSubmit}
                                     >
                                         Login
