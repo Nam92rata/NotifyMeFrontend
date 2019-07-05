@@ -25,10 +25,10 @@ class LoginPage extends Component {
     handleSubmit= (evt)=>{
         evt.preventDefault();
         const username= this.state.username;
-        const password= this.state.password;
-        this.props.changeLoginStateHandler();
-        // this.props.dispatch(authorize(username,password));
+        const password= this.state.password;        
         this.validateUser(username,password);
+        
+        
     }
 
     handleClickShowPassword = () =>{
@@ -48,7 +48,8 @@ class LoginPage extends Component {
               console.log(res.data);
               localStorage.setItem("username",res.data.token.user);
               localStorage.setItem("department",res.data.token.department);
-              console.log(localStorage.getItem('username'));
+              console.log("Validating",localStorage.getItem('username'));
+              this.props.changeLoginStateHandler();
             })
             .catch(error=>{
                 console.log(error)

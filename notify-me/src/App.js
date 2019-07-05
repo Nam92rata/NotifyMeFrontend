@@ -11,13 +11,16 @@ class App extends Component {
     }
   }
   changeLogoutStateHandler=()=>{
+    localStorage.removeItem('username')
+    localStorage.removeItem('department')
     this.setState({loggedin:false})
   }
   changeLoginStateHandler=()=>{
-    this.setState({loggedin:true})    
+      this.setState({loggedin:true});       
+      console.log("Fetched", localStorage.getItem('username'))
   }
   render() {
-    if (this.state.loggedin){
+    if (localStorage.getItem('username')){
       return(
         <div className="App">        
         <div className="row"> 

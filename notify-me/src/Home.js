@@ -69,7 +69,7 @@ const styles = theme => ({
       paddingTop: theme.spacing.unit,
       paddingRight: theme.spacing.unit,
       paddingBottom: theme.spacing.unit,
-      paddingLeft: theme.spacing.unit * 10,
+      paddingLeft: theme.spacing(10),
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('md')]: {
@@ -93,7 +93,8 @@ class Home extends Component {
     state = {
         anchorEl: null,
         mobileMoreAnchorEl: null,
-        response:''
+        response:'',
+        selectedTab:''
       };
       componentDidMount() {
         const endpoint = `http://localhost:4001/`;
@@ -120,6 +121,9 @@ class Home extends Component {
       handleMobileMenuClose = () => {
         this.setState({ mobileMoreAnchorEl: null });
       };
+      // handleChange = (evt) =>{
+      //   this.setState({selectedTab:evt.target.value})
+      // }
     
     handleLogout = () => {
     //    this.props.logoutUser() 
@@ -160,11 +164,11 @@ class Home extends Component {
                 <div className={classes.root}>               
                 <AppBar position="static">
                     <Toolbar>
-                        <Tabs variant="standard" >
-                            <Tab label="Form" component={Link} to="/form" />
-                            <Tab label="Pending" component={Link} to="/pending"/>
-                            <Tab label="Approved" component={Link} to="/approved" />
-                            <Tab label="Request" component={Link} to="/request" />
+                        <Tabs variant="standard" value="Form" >
+                            <Tab label="Form" value="Form" component={Link} to="/form" />
+                            <Tab label="Pending" value="Pending" component={Link} to="/pending"/>
+                            <Tab label="Approved" value="Approved" component={Link} to="/approved" />
+                            <Tab label="Request" value="Request" component={Link} to="/request" />
                         </Tabs>
                 
                         <div className={classes.grow} />
@@ -185,13 +189,16 @@ class Home extends Component {
                 </AppBar>
                 {renderMobileMenu}
                 <Switch>                    
-                    <Route path="/form" component = {FormPage}/>
+                    <Route path="/form" 
+                          render={(props) => <FormPage {...props} data={this.state.response} />}/>
                     <Route
                         path='/pending'
                         render={(props) => <PendingPage {...props} data={this.state.response} />}
                       />
-                    <Route path="/approved"  component = {ApprovedPage}/>
-                    <Route path="/request" component = {RequestPage}/>
+                    <Route path="/approved"  
+                            render={(props) => <ApprovedPage {...props} data={this.state.response} />}/>
+                    <Route path="/request" 
+                            render={(props) => <RequestPage {...props} data={this.state.response} />}/>
                     
                 </Switch>
                 </div>
