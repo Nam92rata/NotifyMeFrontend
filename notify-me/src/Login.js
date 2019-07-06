@@ -3,8 +3,7 @@ import SignupPage from './SignupPage'
 import { Card,CardContent, Typography,Fab, FormControl, TextField, InputAdornment, IconButton, CardActions } from '@material-ui/core';
 import { Visibility, VisibilityOff,  AccountCircle } from '@material-ui/icons';
 import axios from 'axios';
-// var errmsg = "";
-var userActive="";
+
 class LoginPage extends Component {
     constructor(props){
         super(props)
@@ -65,7 +64,7 @@ class LoginPage extends Component {
         this.setState({signup:false})
     }
     render() {  
-        const {error, token}= this.props;
+        const {error}= this.props;
         if(!this.state.signup){        
             return( 
                 <div>

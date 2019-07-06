@@ -8,17 +8,22 @@ class PendingPage extends React.Component {
     return (
         <div>
             <section>
-                <h2>Welcome Pending Page</h2>
-                
-                  {this.props.data.forms.forms.map(el=>{
+                <h2>Welcome Pending Page</h2>                
+                  {
+                    this.props.data.forms.forms.map(el=>{                    
                     if(el.approverDepartment===localStorage.getItem('department') && el.status==="Pending"){
                     return (
-                      <Paper style={{padding: 10,width:"500px", height: "25px", borderRadius:"25px"}} >                      
+                      <Paper key={el._id} style={{padding: 10,width:"500px", height: "25px", borderRadius:"25px"}} >                      
                       <Typography >
-                        <div key={el._id}>{el.creator} posted a  form {el.status} with {el.approver}</div>
+                        {el.creator} has posted a  form which is {el.status.toLowerCase()} with {el.approver}.
                       </Typography>
                     </Paper>
                         )
+                    }
+                    else{
+                      return(
+                        <div key={el._id}></div>
+                      )
                     }
                   })}  
             </section>
@@ -28,8 +33,7 @@ class PendingPage extends React.Component {
       return (
         <div>
             <section>
-                <h2>Welcome Pending Page</h2>                   
-                
+                <h2>Welcome Pending Page</h2> 
             </section>
         </div>
     )

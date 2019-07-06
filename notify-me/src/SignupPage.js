@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card,CardContent, Typography,Fab, FormControl, TextField, InputAdornment, IconButton, CardActions } from '@material-ui/core';
-import { Visibility, VisibilityOff,  AccountCircle } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import axios from 'axios';
 
 class SignupPage extends React.Component { 
@@ -89,8 +89,7 @@ class SignupPage extends React.Component {
                                     <TextField
                                         id="input-with-icon-adornment" type="text"
                                         name="username"
-                                        label="Username"
-                                        
+                                        label="Username"                                        
                                         fullWidth
                                         margin="normal"
                                         style={{margin:20}}
@@ -102,8 +101,7 @@ class SignupPage extends React.Component {
                                     <TextField
                                         id="filled-adornment-password" 
                                         name="password"
-                                        label="Password"
-                                        
+                                        label="Password"                                        
                                         fullWidth
                                         margin="normal"
                                         style={{margin:20}}

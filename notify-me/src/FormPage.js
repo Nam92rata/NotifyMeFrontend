@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card,CardContent, Typography,Fab, FormControl, TextField, InputAdornment, IconButton, CardActions } from '@material-ui/core';
+import { Card,CardContent, Typography,Fab, FormControl, TextField, CardActions } from '@material-ui/core';
 import axios from 'axios';
 
 
@@ -47,16 +47,8 @@ onChangeSelect = (evt)=>{
    
   axios.get(`http://localhost:4000/users/${value}`)
      .then(res => {
-      //  console.log(res);
        console.log("Form ",res.data);
-       this.setState({users: res.data.usersList.users});
-    //    this.setState( prevState => {
-    //     return { 
-    //        users : res.data.usersList.users
-                   
-    //     }
-    //  }, () => console.log(this.state.users)
-    //  )
+       this.setState({users: res.data.usersList.users});    
        })
      .catch(error=>{
          console.log(error)
@@ -78,24 +70,17 @@ handleSubmit= (evt)=>{
         approverDepartment:dept,
         case:message,
         status:status
-      };   
-    // console.log(creator, creatorDepartment ,approver, approverDepartment, case, status)
+      };      
     axios.post(`http://localhost:4000/forms`,  form )
     .then(res => {
-      // console.log(res);
-      console.log(res.data);
-      
+      console.log(res.data);      
     })
     .catch(error=>{
         console.log(error)
     }        
-    )
-    
+    )    
 }
 
-// changeStateHandler =()=>{
-//     this.setState({signup:false})
-// }
 render() {      
     return (  
         <div>        
@@ -121,7 +106,7 @@ render() {
                                     >
                                     <option >--select--</option>
                                     {this.state.deptOptions.map(option => {
-                                        if(option!=localStorage.getItem('department')){
+                                        if(option!==localStorage.getItem('department')){
                                         return (
                                         <option
                                             key={option}
@@ -129,11 +114,14 @@ render() {
                                             label={option}>{option}
                                         </option>
                                         );}
+                                        else{
+                                            return(
+                                                <div></div>
+                                            )
+                                        }
                                     })}
                                     </select>
-                                </div>
-
-                              
+                                </div>                              
                                 <div className="form-group">
                                   <label > Approver </label>
                                   <select
@@ -153,7 +141,6 @@ render() {
                                     })}
                                   </select>
                             </div>
-
                             <div>
                                 <TextField
                                     id="input-message" type="text"

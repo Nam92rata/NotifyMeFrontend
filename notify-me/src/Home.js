@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Switch,Link,Route, NavLink, Redirect, Prompt} from 'react-router-dom';
+import { BrowserRouter as Router, Switch,Link,Route} from 'react-router-dom';
 import socketIOClient from "socket.io-client";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,12 +14,14 @@ import Tab from '@material-ui/core/Tab';
 import FormPage from './FormPage';
 import PendingPage from './PendingPage';
 import ApprovedPage from './ApprovedPage';
+import RejectedPage from './RejectedPage';
 import RequestPage from './RequestPage';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import axios from 'axios';
+import NotificationModal from './NotificationModal';
+import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
     root: {
       width: '100%',
@@ -94,7 +96,8 @@ class Home extends Component {
         anchorEl: null,
         mobileMoreAnchorEl: null,
         response:'',
-        selectedTab:''
+        selectedTab:'',
+        open:false
       };
       componentDidMount() {
         const endpoint = `http://localhost:4001/`;
@@ -108,7 +111,9 @@ class Home extends Component {
       handleProfileMenuOpen = event => {
         this.setState({ anchorEl: event.currentTarget });
       };
-    
+      handleNotificationMenuOpen = event =>{
+        this.setState({ anchorEl: event.currentTarget });
+      }
       handleMenuClose = () => {
         this.setState({ anchorEl: null });
         this.handleMobileMenuClose();
@@ -120,22 +125,11 @@ class Home extends Component {
     
       handleMobileMenuClose = () => {
         this.setState({ mobileMoreAnchorEl: null });
-      };
-      // handleChange = (evt) =>{
-      //   this.setState({selectedTab:evt.target.value})
-      // }
-    
-    handleLogout = () => {
-    //    this.props.logoutUser() 
-    //    this.props.auth("")
-    }
+      };  
     render() {
-        const { anchorEl, mobileMoreAnchorEl } = this.state;
-    const { classes } = this.props;
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-    
+        const { mobileMoreAnchorEl } = this.state;
+    const { classes } = this.props;    
+    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);    
 
     const renderMobileMenu = (
       <Menu
@@ -144,15 +138,12 @@ class Home extends Component {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={isMobileMenuOpen}
         onClose={this.handleMenuClose}
-      >
-        
-        <MenuItem onClick={this.handleMobileMenuClose}>
+      >        
+        <MenuItem onClick={this.handleNotificationMenuOpen}>
           <IconButton color="inherit">
-            <Badge badgeContent={11} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <p>Notifications</p>
+            <NotificationModal data={this.state.response}/>
+            <p>Notifications</p>
+          </IconButton>          
         </MenuItem>
         <MenuItem onClick={this.handleProfileMenuOpen}>
             <Button color="inherit" onClick={this.props.changeLogoutStateHandler}>Logout</Button>          
@@ -168,15 +159,17 @@ class Home extends Component {
                             <Tab label="Form" value="Form" component={Link} to="/form" />
                             <Tab label="Pending" value="Pending" component={Link} to="/pending"/>
                             <Tab label="Approved" value="Approved" component={Link} to="/approved" />
+                            <Tab label="Rejected" value="Rejected" component={Link} to="/rejected" />
                             <Tab label="Request" value="Request" component={Link} to="/request" />
                         </Tabs>
-                
+                        
                         <div className={classes.grow} />
+                        <Typography variant="h6" >
+                          Welcome {localStorage.getItem('username')}
+                        </Typography>
                         <div className={classes.sectionDesktop}>              
-                        <IconButton color="inherit">
-                            <Badge badgeContent={17} color="secondary">
-                            <NotificationsIcon />
-                            </Badge>
+                        <IconButton color="inherit">                          
+                            <NotificationModal data={this.state.response}/>                            
                         </IconButton>
                         <Button color="inherit" onClick={this.props.changeLogoutStateHandler}>Logout</Button>
                         </div>
@@ -190,21 +183,18 @@ class Home extends Component {
                 {renderMobileMenu}
                 <Switch>                    
                     <Route path="/form" 
-                          render={(props) => <FormPage {...props} data={this.state.response} />}/>
-                    <Route
-                        path='/pending'
-                        render={(props) => <PendingPage {...props} data={this.state.response} />}
-                      />
+                            render={(props) => <FormPage {...props} data={this.state.response} />}/>
+                    <Route path='/pending'
+                            render={(props) => <PendingPage {...props} data={this.state.response} />}/>
                     <Route path="/approved"  
                             render={(props) => <ApprovedPage {...props} data={this.state.response} />}/>
+                    <Route path="/rejected"  
+                            render={(props) => <RejectedPage {...props} data={this.state.response} />}/>
                     <Route path="/request" 
-                            render={(props) => <RequestPage {...props} data={this.state.response} />}/>
-                    
+                            render={(props) => <RequestPage {...props} data={this.state.response} />}/>                    
                 </Switch>
                 </div>
-            </Router>
-
-        
+            </Router>        
         )
     }
 }
