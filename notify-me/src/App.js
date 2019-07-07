@@ -39,8 +39,7 @@ class App extends Component {
           <div className="row">
             <div className="col-md-6 col-md-offset-2">
               <LoginPage changeLoginStateHandler={this.changeLoginStateHandler}/>
-            </div>
-          
+            </div>          
           </div>
         </div>
         

@@ -8,7 +8,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { pink } from '@material-ui/core/colors';
+
 class NotificationModal extends React.Component {
     state={
         open:false
@@ -23,27 +23,38 @@ class NotificationModal extends React.Component {
 
     render() {
     if(this.props.data){
+        let newArr=[];
+        let reversedArray = [...this.props.data.forms.forms].reverse();
+        reversedArray.map(el=>{
+            if((el.approver===localStorage.getItem('username') && el.status==="Pending") ||
+             ((el.creator===localStorage.getItem('username') && (el.status==="Approved" || el.status==="Rejected")))){
+                newArr.push(el)
+             }
+        })
+
     return (
         <div>
-            <Badge badgeContent={this.props.data.forms.forms.length} color="secondary">
-                <NotificationsIcon onClick={this.showNotifications} />
+            <Badge badgeContent={newArr.length} color="secondary">
+                <NotificationsIcon onClick={this.showNotifications} />                
             </Badge>
-            <Modal open={this.state.open} onClose={this.handleClose} style={{paddingTop:40,paddingLeft:300,paddingRight:200}}>
+            
+            <Modal open={this.state.open} onClose={this.handleClose} style={{padding:'auto',paddingTop:10,width:'400',marginRight:'20%',marginLeft:'20%',border:'none'}}>
                 <List>
-                    {this.props.data.forms.forms.map(el=>{
+                    {reversedArray.map(el=>{
                     if((el.approver===localStorage.getItem('username') && el.status==="Pending")){
                         return (
-                        <Paper key={el._id} style={{position: 'relative', width: 400,
-                                        backgroundColor: pink,                                       
-                                        padding: 10,
-                                        outline: 'none'}} >                      
-                        <ListItem >
-                            <ListItemAvatar>
-                            <Avatar>                                        
+                        <Paper key={el._id} style={{position: 'relative', width: 'auto',  
+                                        outline: 'none'}} >                                              
+                        <ListItem >    
+                        <ListItemAvatar>
+                            <Avatar>
+                            <i className="material-icons" style={{color:'darkblue'}}>
+                            person
+                            </i>
                             </Avatar>
-                        </ListItemAvatar>
+                        </ListItemAvatar>                        
                         <ListItemText>
-                            <div >{el.creator} has requested a form {el.status.toLowerCase()} for your ({el.approver}) approval.</div>
+                            <div ><b>{el.creator}</b> has requested a form {el.status.toLowerCase()} for your approval.</div>
                             </ListItemText>
                         </ListItem>
                         </Paper>
@@ -51,17 +62,18 @@ class NotificationModal extends React.Component {
                     }
                     else if((el.creator===localStorage.getItem('username') && (el.status==="Approved" || el.status==="Rejected"))){
                         return (
-                            <Paper key={el._id} style={{position: 'relative', width: 400,
-                                            backgroundColor: pink,                                       
-                                            padding: 10,
+                            <Paper key={el._id} style={{position: 'relative', width: 'auto',  
                                             outline: 'none'}} >                      
-                            <ListItem >
-                                <ListItemAvatar>
-                                <Avatar>                                        
+                            <ListItem >   
+                            <ListItemAvatar>
+                                <Avatar>
+                                <i className="material-icons" style={{color:'darkblue'}}>
+                                person
+                                </i>
                                 </Avatar>
-                            </ListItemAvatar>
+                            </ListItemAvatar>                             
                             <ListItemText>
-                                <div >{el.approver} has {el.status.toLowerCase()} your ({el.creator}) request </div>
+                                <div ><b>{el.approver}</b> has {el.status.toLowerCase()} your request.</div>
                                 </ListItemText>
                             </ListItem>
                             </Paper>
@@ -81,7 +93,7 @@ class NotificationModal extends React.Component {
     else{
       return (
         <div> 
-            <Badge badgeContent={17} color="secondary">
+            <Badge  color="secondary">
                 <NotificationsIcon onClick={this.showNotifications} />
             </Badge>           
         </div>

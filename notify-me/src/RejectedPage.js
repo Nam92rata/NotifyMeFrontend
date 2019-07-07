@@ -1,29 +1,32 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 
 class RejectedPage extends React.Component {
   render() {
     if(this.props.data){
+      var newArr=[];
+      let reversedArray = [...this.props.data.forms.forms].reverse();
+      reversedArray.map(el=>{                    
+        if(el.approverDepartment===localStorage.getItem('department') && el.status==="Rejected"){
+          newArr.push(el)
+      }})   
+      newArr=newArr.slice(0,5);
     return (
         <div>
             <section>
-                <h2>Welcome Rejected Page</h2>                
-                  {this.props.data.forms.forms.map(el=>{
-                    if(el.approverDepartment===localStorage.getItem('department') && el.status==="Rejected"){
+                <h2>Rejected Requests</h2>                
+                  {newArr.map(el=>{
                     return (
-                      <Paper key={el._id} style={{padding: 10,width:"500px", height: "25px", borderRadius:"25px"}} >                      
-                      <Typography >
-                      You {el.status.toLowerCase()} the form of {el.creator}.
-                      </Typography>
-                    </Paper>
+                      <div key={el._id}>
+                        <Paper key={el._id} style={{marginLeft:'20%', padding: 20,width:"500px", 
+                                     backgroundColor:'darksalmon', height: "auto", borderRadius:"25px"}}> 
+                        You {el.status.toLowerCase()} the form of {el.creator}.
+                        <br/>
+                        <div>Message: <span style={{color:'darkblue'}}><b><i>{el.case}</i></b></span></div>
+                        </Paper>
+                        <br/>
+                      </div>
                         )
-                    }
-                    else{
-                      return(
-                        <div key={el._id}></div>
-                      )
-                    }
                   })}  
             </section>
         </div>
@@ -32,7 +35,7 @@ class RejectedPage extends React.Component {
       return (
         <div>
             <section>
-                <h2>Welcome Rejected Page</h2>  
+                <h2>No Rejected Requests</h2>  
             </section>
         </div>
     )

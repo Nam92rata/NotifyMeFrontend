@@ -1,16 +1,21 @@
 import React, {Component} from 'react';
 import SignupPage from './SignupPage'
-import { Card,CardContent, Typography,Fab, FormControl, TextField, InputAdornment, IconButton, CardActions } from '@material-ui/core';
+import { Typography, TextField, InputAdornment, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff,  AccountCircle } from '@material-ui/icons';
 import axios from 'axios';
-
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
 class LoginPage extends Component {
     constructor(props){
         super(props)
         this.state={
           signup: false,
           username:'',
-          password:''
+          password:'',
+          error: ''
         }
         this.handleSubmit=this.handleSubmit.bind(this);
     }
@@ -40,7 +45,7 @@ class LoginPage extends Component {
             username: username,
             password:password
           };
-      
+        if(username && password){
           axios.post(`http://localhost:4000/signIn`,  user )
             .then(res => {
               console.log(res);
@@ -49,12 +54,18 @@ class LoginPage extends Component {
               localStorage.setItem("department",res.data.token.department);
               console.log("Validating",localStorage.getItem('username'));
               this.props.changeLoginStateHandler();
+              this.setState({error:''})
             })
             .catch(error=>{
+                this.setState({error:'Invalid credentials'})
                 console.log(error)
-            }
-                
+            }                
             )
+        }
+        else{
+            this.setState({error:'Fields cannot be empty'})
+            console.log("Empty not allowed")
+        }
     }
     
     handleSignup = () =>{
@@ -64,101 +75,83 @@ class LoginPage extends Component {
         this.setState({signup:false})
     }
     render() {  
-        const {error}= this.props;
+        
         if(!this.state.signup){        
             return( 
-                <div>
-                    <form onSubmit={(evt)=>this.handleSubmit(evt)}>
-                    <div>
-                       <Card className="LoginPage">
-                           <CardContent>
-                               <Typography gutterBottom component="span" align="center">
-                                   Notify Me
-                               </Typography>
-                               
-                               <div>
-                                   {error && <div style={{color:'red',textAlign:'center'}}>{error}</div>}
-                                   <FormControl>
-                                       <div>
-                                            <TextField
-                                                id="input-with-icon-adornment" type="text"
-                                                name="username"
-                                                label="Username"
-                                                fullWidth
-                                                margin="normal"
-                                                style={{margin:20}}
-                                                variant="filled"
-                                                onChange={e=>{this.onChange(e)}}
-                                                InputProps={{
-                                                    endAdornment:(
-                                                        <InputAdornment  position="start">
-                                                            <AccountCircle/>
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <TextField
-                                                id="filled-adornment-password" 
-                                                name="password"
-                                                label="Password"
-                                                fullWidth
-                                                margin="normal"
-                                                style={{margin:20}}
-                                                type={this.state.showPassword ? 'text':'password'}
-                                                variant="filled"
-                                                onChange={e=>{this.onChange(e)}}
-                                                InputProps={{
-                                                    endAdornment:(
-                                                        <InputAdornment  position="end">
-                                                            <IconButton
-                                                                aria-label="Toggle password visibility"
-                                                                onClick={this.handleClickShowPassword}
-                                                                    >
-                                                                {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                            />
-                                        </div>
-                                        <br/>
-                                   </FormControl>
-                               </div>
-                               <CardActions>
-                                    <Fab
-                                        variant="extended"                                        
-                                        color="primary"                                        
-                                        type="submit"
-                                        style={{margin:20}}
-                                        
-                                        onClick={this.handleSubmit}
-                                    >
-                                        Login
-                                    </Fab>
-                                    <Fab variant="extended" color="primary" aria-label="Add"
-                                        onClick = {this.handleSignup} >
-                                        SignUp
-                                    </Fab>
-                                   {/* <Button label="Login"
-                                        fullWidth
-                                        margin="normal"
-                                        style={{margin:20}}
-                                        buttonStyle={{borderRadius: 25}}
-                                        labelColor={'#FFFFFF'}
-                                        backgroundColor={'#0066e8'}
-                                        style={{borderRadius:25}}
-                                        type="submit"
-                                        onClick={this.submit}
-                                    /> */}
-                               </CardActions>
-                           </CardContent>
-                       </Card>
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline />
+                    <div style={{marginTop: 50}} >
+                        
+                        <Typography component="h1" variant="h5">
+                        Welcome to NotifyMe
+                        </Typography>
+                        {this.state.error && <div style={{color:'red',textAlign:'center'}}>{this.state.error}</div>} 
+                        <form onSubmit={(evt)=>this.handleSubmit(evt)} >
+                        <TextField
+                            id="input-with-icon-adornment" type="text"
+                            variant="outlined"
+                            name="username"
+                            label="Username"
+                            fullWidth
+                            required
+                            autoFocus
+                            margin="normal"  
+                            onChange={e=>{this.onChange(e)}}
+                            InputProps={{
+                                endAdornment:(
+                                    <InputAdornment  position="start">
+                                        <AccountCircle/>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <TextField
+                            id="filled-adornment-password" 
+                            name="password"
+                            label="Password"
+                            fullWidth
+                            required
+                            margin="normal"
+                            type={this.state.showPassword ? 'text':'password'}
+                            variant="outlined"
+                            onChange={e=>{this.onChange(e)}}
+                            InputProps={{
+                                endAdornment:(
+                                    <InputAdornment  position="end">
+                                        <IconButton
+                                            aria-label="Toggle password visibility"
+                                            onClick={this.handleClickShowPassword}
+                                                >
+                                            {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            onClick={this.handleSubmit}
+                        >
+                            LogIn
+                        </Button>
+                        <br/>
+                        <br/>
+                        <Grid container justify="flex-end">
+                            <div >
+                            <Grid item >
+                            <Link href="#" variant="body2" onClick = {this.handleSignup}>
+                                {"Don't have an account? Sign Up"}
+                            </Link>
+                            </Grid> 
+                            </div>                          
+                        </Grid>
+                        </form>
                     </div>
-
-                    </form>
-                </div>                     
+                    </Container>
             )
         }
         else{

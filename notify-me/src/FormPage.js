@@ -1,7 +1,14 @@
 import React from 'react';
-import { Card,CardContent, Typography,Fab, FormControl, TextField, CardActions } from '@material-ui/core';
+import {  Typography,Fab, FormControl, TextField } from '@material-ui/core';
 import axios from 'axios';
-
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Select from '@material-ui/core/Select';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
 
 class FormPage extends React.Component {
   constructor(props){
@@ -13,13 +20,13 @@ class FormPage extends React.Component {
         message:''
     },
     deptOptions: ['D1', 'D2', 'D3'],
-    users:[]
+    users:[],
+    open:false
     }
     this.handleSubmit=this.handleSubmit.bind(this);
 }
 
-onChange=(evt)=>{
-  console.log("Here")
+onChange=(evt)=>{  
     let value = evt.target.value;
     let name = evt.target.name; 
     this.setState( prevState => {
@@ -47,7 +54,7 @@ onChangeSelect = (evt)=>{
    
   axios.get(`http://localhost:4000/users/${value}`)
      .then(res => {
-       console.log("Form ",res.data);
+    //    console.log("Form ",res.data);
        this.setState({users: res.data.usersList.users});    
        })
      .catch(error=>{
@@ -71,104 +78,154 @@ handleSubmit= (evt)=>{
         case:message,
         status:status
       };      
-    axios.post(`http://localhost:4000/forms`,  form )
-    .then(res => {
-      console.log(res.data);      
+    if(creator && creatordept && approver && dept && message){
+        axios.post(`http://localhost:4000/forms`,  form )
+        .then(res => {
+        console.log(res.data);   
+        this.setState( prevState => {
+            return { 
+               newForm : {
+                        ...prevState.newForm, message: "",approver:"", department:""
+                       }
+            }
+         }, () => console.log("On submit", this.state.newForm)
+         )
+         this.handleClick();
     })
-    .catch(error=>{
-        console.log(error)
-    }        
-    )    
+        .catch(error=>{
+            console.log(error)
+        }        
+        )
+    }   
+    else{
+        console.log("Empty not allowed")
+    } 
 }
+    handleClick() {
+        this.setState({open:true});
+  }
 
+    handleClose() {
+    this.setState({open:false});
+  }
+  
 render() {      
     return (  
-        <div>        
-        <section>     
-        <div>
-            <form onSubmit={(evt)=>this.handleSubmit(evt)}>
-            <div>
-                <Card className="LoginPage">
-                <CardContent>
-                    <Typography gutterBottom component="span" align="center">
-                        Create a form
-                    </Typography>
-                    
-                    <div>
-                        {/* {error && <div style={{color:'red',textAlign:'center'}}>{error}</div>} */}
-                        <FormControl>
-                            <div className="form-group">
-                                    <label > Department </label>
-                                    <select
-                                    name="department"     
-                                    value={this.state.newForm.department}                                       
-                                    onChange={e=>{this.onChangeSelect(e)}}
-                                    >
-                                    <option >--select--</option>
-                                    {this.state.deptOptions.map(option => {
-                                        if(option!==localStorage.getItem('department')){
-                                        return (
-                                        <option
-                                            key={option}
-                                            value={option}
-                                            label={option}>{option}
-                                        </option>
-                                        );}
-                                        else{
-                                            return(
-                                                <div></div>
-                                            )
-                                        }
-                                    })}
-                                    </select>
-                                </div>                              
-                                <div className="form-group">
-                                  <label > Approver </label>
-                                  <select
-                                  name="approver"     
-                                  value={this.state.newForm.approver}                                       
-                                  onChange={e=>{this.onChange(e)}}
-                                  >
-                                  <option  >--select--</option>
-                                  {this.state.users.map(option => {
-                                        return (
-                                        <option
-                                            key={option}
-                                            value={option}
-                                            label={option}>{option}
-                                        </option>
-                                        );
-                                    })}
-                                  </select>
-                            </div>
-                            <div>
-                                <TextField
-                                    id="input-message" type="text"
-                                    name="message"
-                                    label="Message"                                    
-                                    fullWidth
-                                    margin="normal"
-                                    style={{margin:20}}
-                                    variant="filled"
-                                    onChange={e=>{this.onChange(e)}}                                             
-                                />
-                            </div> 
-                            <br/>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+                <div style={{marginTop: 50}}>
+                <h2>Create a Form</h2>
+                <br/>
+                <br/>
+                <form onSubmit={(evt)=>this.handleSubmit(evt)}>
+                <Grid container spacing={2}> 
+                    <Grid item xs={12} sm={4}>                     
+                    <Typography style={{paddingTop:'20px'}}>
+                        <label  >Department </label> 
+                    </Typography> 
+                    </Grid>       
+                    <Grid item xs={12} sm={8}>
+                   
+                    <FormControl variant="outlined" >                        
+                            <Select
+                            native                            
+                            required
+                            fullWidth
+                            style={{minWidth:'200px'}} 
+                            name="department"     
+                            value={this.state.newForm.department}                                       
+                            onChange={e=>{this.onChangeSelect(e)}}
+                            input={
+                                <OutlinedInput name="department"  id="outlined-simple" />
+                            }
+                            >
+                            <option >--select--</option>
+                            {this.state.deptOptions.map(option => {
+                            if(option!==localStorage.getItem('department')){
+                            return (
+                            <option
+                                key={option}
+                                value={option}
+                                label={option}>{option}
+                            </option>
+                            )}
+                            else{
+                                return null;
+                            }
+                        })}
+                            </Select>  
                         </FormControl>
-                    </div>
-                    <CardActions>                                                                       
-                        <Fab variant="extended" color="primary" aria-label="Add"
-                            onClick = {this.handleSubmit} >
-                            Send Form
-                        </Fab>                                 
-                    </CardActions>
-                </CardContent>
-                </Card>
+                  </Grid>
+                               
+                  <Grid item xs={12} sm={4}>                     
+                    <Typography style={{paddingTop:'20px'}}>
+                        <label  >Approver </label> 
+                    </Typography> 
+                    </Grid>
+                  <Grid item xs={12} sm={8}>  
+                    <FormControl variant="outlined" style={{minWidth: 120}} >
+                        
+                            <Select
+                            native                            
+                            required
+                            style={{minWidth:'200px'}}
+                            name="approver"     
+                            value={this.state.newForm.approver}                                       
+                            onChange={e=>{this.onChange(e)}}
+                            input={
+                                <OutlinedInput name="approver"  id="outlined-approver-simple" />
+                            }
+                            >
+                            <option  >--select--</option>
+                            {this.state.users.map(option => {
+                                return (
+                                <option
+                                    key={option}
+                                    value={option}
+                                    label={option}>{option}
+                                </option>
+                                );
+                            })}
+                            </Select>  
+                        </FormControl>
+                    </Grid>  
+
+                    <Grid item xs={12}> 
+                    
+                        <TextField
+                            id="input-message" type="text"
+                            name="message"
+                            label="Message"                                    
+                            fullWidth
+                            required
+                            margin="normal"
+                            variant="filled"
+                            value={this.state.newForm.message} 
+                            onChange={e=>{this.onChange(e)}}                                             
+                        />                        
+                    </Grid>                
+                </Grid>
+                <br/>
+                <br/>
+                <Fab variant="extended" color="primary" aria-label="Add"
+                    onClick = {this.handleSubmit} >
+                    Send Form
+                </Fab>
+                <Snackbar
+                    open={this.state.open? true: false}
+                    autoHideDuration={4000}
+                    variant="success"                    
+                    message={<span id="snackbar-fab-message-id" style={{ display: 'flex',alignItems: 'center'}}>Form submitted successfully !</span>}
+                    action={
+                        <IconButton key="close" aria-label="Close" color="inherit" onClick={this.handleClose.bind(this)}>
+                            <CloseIcon  />
+                        </IconButton>
+                    }                    
+                    />
+                <br/>   
+              </form>
             </div>
-            </form>
-        </div> 
-        </section>
-        </div>
+          </Container>
 );
 }
 }

@@ -6,8 +6,6 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
@@ -41,28 +39,35 @@ class RequestPage extends React.Component {
   
   render() {
     if(this.props.data){
+      var newArr=[];
+      let reversedArray = [...this.props.data.forms.forms].reverse();
+      reversedArray.map(el=>{                    
+        if(el.approver===localStorage.getItem('username') && el.status==="Pending"){
+          newArr.push(el)
+      }})   
+      
     return (
         <div>
             <section>
-                <h2>Welcome Request Page</h2>                
+                <h2>Requests</h2>                
                   <List >
-                  {this.props.data.forms.forms.map(el=>{
-                      if(el.approver===localStorage.getItem('username') && el.status==="Pending"){
+                  {newArr.map(el=>{
                       return (
-                        <Paper style={{padding: 10,width:"auto", height: "auto", borderRadius:"25px"}} >  
-                              <ListItem>
+                        <div key={el._id}>
+                        <Paper style={{ marginLeft:'10%', padding: 10,width:"auto", height: "auto", borderRadius:"25px"}} >  
+                          <ListItem>
                                 <ListItemAvatar>
                                   <Avatar>
-                                    <FolderIcon />
+                                  <i className="material-icons" style={{color:'darkblue'}}>
+                                    person
+                                    </i>
                                   </Avatar>
                                 </ListItemAvatar>
-                                <ListItemText>
-                                  <Typography >
-                                    <div key={el._id}>{el.creator} has requested a  form {el.status.toLowerCase()} with you.
+                                <ListItemText>                                  
+                                    <div key={el._id}><b>{el.creator}</b> has requested a  form {el.status.toLowerCase()} with you.
                                     <br/>
-                                      {el.case}
-                                    </div>
-                                  </Typography>
+                                      <div>Message: <span style={{color:'#090eea'}}><b><i>{el.case}</i></b></span></div>
+                                    </div>                                  
                                 </ListItemText>
                                 <ListItemSecondaryAction>                                  
                                     <Button variant="contained" color="primary" onClick={this.handleApprove.bind(this,el._id)} >
@@ -74,13 +79,9 @@ class RequestPage extends React.Component {
                                 </ListItemSecondaryAction>
                               </ListItem> 
                       </Paper>
-                          )
-                      }
-                      else{
-                        return(
-                          <div key={el._id}></div>
-                        )
-                      }
+                      <br/>
+                      </div>
+                          )      
                     })}
                   </List>
             </section>
@@ -90,14 +91,12 @@ class RequestPage extends React.Component {
       return (
         <div>
             <section>
-                <h2>Welcome Request Page</h2>                   
-                
+                <h6>No Requests</h6> 
             </section>
         </div>
     )
     }
   }
-  
 }
 
 export default RequestPage;

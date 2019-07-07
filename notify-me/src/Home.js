@@ -5,8 +5,6 @@ import socketIOClient from "socket.io-client";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
@@ -21,7 +19,6 @@ import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import NotificationModal from './NotificationModal';
-import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
     root: {
       width: '100%',
@@ -96,8 +93,9 @@ class Home extends Component {
         anchorEl: null,
         mobileMoreAnchorEl: null,
         response:'',
-        selectedTab:'',
-        open:false
+        selectedTab:'Form',
+        open:false,
+        value: ''
       };
       componentDidMount() {
         const endpoint = `http://localhost:4001/`;
@@ -126,6 +124,10 @@ class Home extends Component {
       handleMobileMenuClose = () => {
         this.setState({ mobileMoreAnchorEl: null });
       };  
+      onSelect = (event, value) => {
+        console.log(value)
+        this.setState({ value });
+      };
     render() {
         const { mobileMoreAnchorEl } = this.state;
     const { classes } = this.props;    
@@ -142,7 +144,6 @@ class Home extends Component {
         <MenuItem onClick={this.handleNotificationMenuOpen}>
           <IconButton color="inherit">
             <NotificationModal data={this.state.response}/>
-            <p>Notifications</p>
           </IconButton>          
         </MenuItem>
         <MenuItem onClick={this.handleProfileMenuOpen}>
@@ -155,18 +156,18 @@ class Home extends Component {
                 <div className={classes.root}>               
                 <AppBar position="static">
                     <Toolbar>
-                        <Tabs variant="standard" value="Form" >
-                            <Tab label="Form" value="Form" component={Link} to="/form" />
-                            <Tab label="Pending" value="Pending" component={Link} to="/pending"/>
-                            <Tab label="Approved" value="Approved" component={Link} to="/approved" />
-                            <Tab label="Rejected" value="Rejected" component={Link} to="/rejected" />
-                            <Tab label="Request" value="Request" component={Link} to="/request" />
+                        <Tabs variant="standard" value={this.state.value} onChange={this.onSelect}  >
+                            <Tab label="Form" value={0}  component={Link} to="/form" />
+                            <Tab label="Pending" value={1}  component={Link} to="/pending"/>
+                            <Tab label="Approved" value={2}  component={Link} to="/approved" />
+                            <Tab label="Rejected" value={3}  component={Link} to="/rejected" />
+                            <Tab label="Request" value={4}  component={Link} to="/request" />
                         </Tabs>
                         
                         <div className={classes.grow} />
-                        <Typography variant="h6" >
+                       
                           Welcome {localStorage.getItem('username')}
-                        </Typography>
+                        
                         <div className={classes.sectionDesktop}>              
                         <IconButton color="inherit">                          
                             <NotificationModal data={this.state.response}/>                            
