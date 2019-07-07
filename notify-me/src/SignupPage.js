@@ -55,7 +55,7 @@ class SignupPage extends React.Component {
          }, () => console.log(this.state.newUser)
          )
          
-        axios.get(`http://localhost:4000/users`)
+        axios.get(`https://secure-depths-88479.herokuapp.com/users`)
         .then(res => {
         // console.log(res);
         console.log(res.data.usersList.users); 
@@ -91,14 +91,15 @@ class SignupPage extends React.Component {
             department:dept
           };
         // this.props.dispatch(authorize(username,password));
-        console.log(username,password,dept)
-        if(username && password && dept && this.state.usernameAvailable){
-            axios.post(`http://localhost:4000/signUp`,  user )
+        console.log(username,password,dept,this.state.usernameAvailable)
+        if(username && password && dept ){
+          if(this.state.usernameAvailable){
+            axios.post(`https://secure-depths-88479.herokuapp.com/signUp`,  user )
             .then(res => {
             console.log(res);
-            console.log(res.data);
-            this.setState({error:''})
+            console.log(res.data);            
             this.props.changeStateHandler();
+            this.setState({error:''})
             
             })
             .catch(error=>{
@@ -106,10 +107,15 @@ class SignupPage extends React.Component {
                 console.log(error)
             }            
             )
+          }
+          else{
+            this.setState({error:'Username already taken'})
+             
+          }
         }
         else{
             this.setState({error:'Fields cannot be empty'})
-            console.log("Empty not allowed")
+            console.log("Fields cannot be empty")
         }
        
     }
@@ -135,7 +141,7 @@ class SignupPage extends React.Component {
               {this.state.error && <div style={{color:'red',textAlign:'center'}}>{this.state.error}</div>}
               <form onSubmit={(evt)=>this.handleSubmit(evt)}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                         id="input" type="text"
                         variant="outlined"
@@ -148,10 +154,13 @@ class SignupPage extends React.Component {
                         onChange={e=>{this.onChangeUsername(e)}}                        
                     />
                   </Grid>
-                  <Grid item xs={12} sm={1}>
+                  {/* <Grid item xs={12} sm={12}>
                     <AvailabilityIcon  data={this.state.usernameAvailable}/>
-                  </Grid>
-                  <Grid item xs={11}>
+                  </Grid> */}
+                  {this.state.newUser.username ? 
+                    (this.state.usernameAvailable ?
+                      <div style={{color:'green',textAlign:'center'}}>Username available</div>:<div style={{color:'red',textAlign:'center'}}>Username already taken</div>): ''}
+                  <Grid item xs={12} sm={12}>
                   <TextField
                         id="filled-adornment-password" 
                         name="password"
@@ -176,12 +185,12 @@ class SignupPage extends React.Component {
                         }}
                     />
                     </Grid> 
-                    <Grid item xs={12} sm={4}>                     
+                    <Grid item xs={4} sm={4}>                     
                     <Typography style={{paddingTop:'20px'}}>
                         <label  >Department </label> 
                     </Typography> 
                     </Grid> 
-                    <Grid item xs={12} sm={8}>  
+                    <Grid item xs={8} sm={8}>  
                         <FormControl variant="outlined"  >
                             <Select
                             native                            

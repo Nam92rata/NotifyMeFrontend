@@ -8,6 +8,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
 
 class RequestPage extends React.Component {
   handleApprove = (id) =>{
@@ -16,7 +18,7 @@ class RequestPage extends React.Component {
         [{propName:'status',
         value:'Approved'} ]
     
-    axios.patch(`http://localhost:4000/forms/${id}`, form)
+    axios.patch(`https://secure-depths-88479.herokuapp.com/forms/${id}`, form)
     .then(res => console.log(res.data))
     .catch(error=>{
       console.log(error);
@@ -30,7 +32,7 @@ class RequestPage extends React.Component {
       value:'Rejected'      
   }]
   console.log(form);
-    axios.patch(`http://localhost:4000/forms/${id}`, form)
+    axios.patch(`https://secure-depths-88479.herokuapp.com/forms/${id}`, form)
     .then(res => console.log(res.data))
     .catch(error=>{
       console.log(error);
@@ -48,13 +50,14 @@ class RequestPage extends React.Component {
       
     return (
         <div>
-            <section>
+            <Container component="main" >
+              <CssBaseline />
                 <h2>Requests</h2>                
                   <List >
                   {newArr.map(el=>{
                       return (
                         <div key={el._id}>
-                        <Paper style={{ marginLeft:'10%', padding: 10,width:"auto", height: "auto", borderRadius:"25px"}} >  
+                        <Paper style={{  padding: 10,width:"auto", height: "auto", borderRadius:"25px"}} >  
                           <ListItem>
                                 <ListItemAvatar>
                                   <Avatar>
@@ -84,14 +87,14 @@ class RequestPage extends React.Component {
                           )      
                     })}
                   </List>
-            </section>
+            </Container>
         </div>
     );}
     else{
       return (
         <div>
             <section>
-                <h6>No Requests</h6> 
+                <h2>No Requests</h2> 
             </section>
         </div>
     )

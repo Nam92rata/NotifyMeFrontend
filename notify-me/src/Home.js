@@ -98,7 +98,7 @@ class Home extends Component {
         value: ''
       };
       componentDidMount() {
-        const endpoint = `http://localhost:4001/`;
+        const endpoint = `https://stormy-crag-26876.herokuapp.com/`;
         const socket = socketIOClient(endpoint);
         socket.on("FromAPI", data =>{
         console.log("data", data);

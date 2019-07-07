@@ -1,5 +1,7 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
 
 class RejectedPage extends React.Component {
   render() {
@@ -13,12 +15,13 @@ class RejectedPage extends React.Component {
       newArr=newArr.slice(0,5);
     return (
         <div>
-            <section>
+            <Container component="main" >
+              <CssBaseline />
                 <h2>Rejected Requests</h2>                
                   {newArr.map(el=>{
                     return (
                       <div key={el._id}>
-                        <Paper key={el._id} style={{marginLeft:'20%', padding: 20,width:"500px", 
+                        <Paper key={el._id} style={{padding: 20,width:"auto", 
                                      backgroundColor:'darksalmon', height: "auto", borderRadius:"25px"}}> 
                         You {el.status.toLowerCase()} the form of {el.creator}.
                         <br/>
@@ -28,7 +31,7 @@ class RejectedPage extends React.Component {
                       </div>
                         )
                   })}  
-            </section>
+            </Container>
         </div>
     );}
     else{

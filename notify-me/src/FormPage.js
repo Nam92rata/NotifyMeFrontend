@@ -9,7 +9,6 @@ import Select from '@material-ui/core/Select';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
-
 class FormPage extends React.Component {
   constructor(props){
     super(props)
@@ -21,7 +20,8 @@ class FormPage extends React.Component {
     },
     deptOptions: ['D1', 'D2', 'D3'],
     users:[],
-    open:false
+    open:false,
+    error:''
     }
     this.handleSubmit=this.handleSubmit.bind(this);
 }
@@ -52,7 +52,7 @@ onChangeSelect = (evt)=>{
  }, () => console.log("On change", this.state.newForm)
  )
    
-  axios.get(`http://localhost:4000/users/${value}`)
+  axios.get(`https://secure-depths-88479.herokuapp.com/users/${value}`)
      .then(res => {
     //    console.log("Form ",res.data);
        this.setState({users: res.data.usersList.users});    
@@ -79,7 +79,7 @@ handleSubmit= (evt)=>{
         status:status
       };      
     if(creator && creatordept && approver && dept && message){
-        axios.post(`http://localhost:4000/forms`,  form )
+        axios.post(`https://secure-depths-88479.herokuapp.com/forms`,  form )
         .then(res => {
         console.log(res.data);   
         this.setState( prevState => {
@@ -91,13 +91,16 @@ handleSubmit= (evt)=>{
          }, () => console.log("On submit", this.state.newForm)
          )
          this.handleClick();
+         this.setState({error:''})
     })
         .catch(error=>{
+            this.setState({error:'Invalid entries'})
             console.log(error)
         }        
         )
     }   
     else{
+        this.setState({error:'Empty fields not allowed'})
         console.log("Empty not allowed")
     } 
 }
@@ -114,17 +117,21 @@ render() {
         <Container component="main" maxWidth="xs">
             <CssBaseline />
                 <div style={{marginTop: 50}}>
-                <h2>Create a Form</h2>
-                <br/>
-                <br/>
-                <form onSubmit={(evt)=>this.handleSubmit(evt)}>
+              
+              <Typography component="h1" variant="h4">
+                Create a Form
+              </Typography>
+              <br/>
+              {this.state.error && <div style={{color:'red',textAlign:'center'}}>{this.state.error}</div>}
+              <br/>
+              <form onSubmit={(evt)=>this.handleSubmit(evt)}>
                 <Grid container spacing={2}> 
-                    <Grid item xs={12} sm={4}>                     
+                    <Grid item xs={4} sm={4}>                     
                     <Typography style={{paddingTop:'20px'}}>
                         <label  >Department </label> 
                     </Typography> 
                     </Grid>       
-                    <Grid item xs={12} sm={8}>
+                    <Grid item xs={8} sm={8}>
                    
                     <FormControl variant="outlined" >                        
                             <Select
@@ -157,12 +164,12 @@ render() {
                         </FormControl>
                   </Grid>
                                
-                  <Grid item xs={12} sm={4}>                     
+                  <Grid item xs={4} sm={4}>                     
                     <Typography style={{paddingTop:'20px'}}>
                         <label  >Approver </label> 
                     </Typography> 
                     </Grid>
-                  <Grid item xs={12} sm={8}>  
+                  <Grid item xs={8} sm={8}>  
                     <FormControl variant="outlined" style={{minWidth: 120}} >
                         
                             <Select
@@ -206,22 +213,27 @@ render() {
                     </Grid>                
                 </Grid>
                 <br/>
-                <br/>
+                
                 <Fab variant="extended" color="primary" aria-label="Add"
                     onClick = {this.handleSubmit} >
                     Send Form
                 </Fab>
+                <br/>
+                
+                <div style={{backgroundColor: 'green'}} >
                 <Snackbar
                     open={this.state.open? true: false}
-                    autoHideDuration={4000}
-                    variant="success"                    
+                    autoHideDuration={2000}                                             
                     message={<span id="snackbar-fab-message-id" style={{ display: 'flex',alignItems: 'center'}}>Form submitted successfully !</span>}
+                    
                     action={
-                        <IconButton key="close" aria-label="Close" color="inherit" onClick={this.handleClose.bind(this)}>
+                        <IconButton key="close" aria-label="Close"  onClick={this.handleClose.bind(this)}>
                             <CloseIcon  />
                         </IconButton>
                     }                    
                     />
+                </div>
+
                 <br/>   
               </form>
             </div>
